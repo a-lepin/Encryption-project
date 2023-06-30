@@ -3,6 +3,8 @@ import encryption
 
 
 def create_parser():
+    """Parses command line arguments, using the argparse module, and return result."""
+
     parser = argparse.ArgumentParser()
     parser.add_argument('input', type=argparse.FileType('r'))
     parser.add_argument('output', type=argparse.FileType('w'))
@@ -14,16 +16,14 @@ def create_parser():
     vigenere_parsers = cipher_parsers.add_parser('vigenere')
     verman_parsers = cipher_parsers.add_parser('verman')
 
-    caesar_parsers.add_argument('key', type=int)
+    caesar_parsers.add_argument('key', type=int, nargs='?', default=3)
     vigenere_parsers.add_argument('key', type=argparse.FileType('r'))
     verman_parsers.add_argument('key', type=argparse.FileType('r+'))
     
     return parser
 
-
-if __name__ == '__main__':
-    parser = create_parser()
-    args = parser.parse_args()
+def process_request(args: argparse.Namespace) -> None:
+    """Determines the type of request and executes the desired request."""
 
     encr = encryption.Encryption(args.language)
 
@@ -52,5 +52,8 @@ if __name__ == '__main__':
     else:
         raise ValueError('Unknown cipher_name: {}'.format(args.cipher_name))
         
-
+if __name__ == '__main__':
+    parser = create_parser()
+    args = parser.parse_args()
+    process_request(args)
     
