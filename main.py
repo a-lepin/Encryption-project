@@ -1,5 +1,6 @@
 import argparse
 import encryption
+import cracker
 
 
 def create_parser():
@@ -15,6 +16,7 @@ def create_parser():
     caesar_parsers = cipher_parsers.add_parser('caesar')
     vigenere_parsers = cipher_parsers.add_parser('vigenere')
     verman_parsers = cipher_parsers.add_parser('verman')
+    caesar_crack_parser = cipher_parsers.add_parser('crack')
 
     caesar_parsers.add_argument('key', type=int, nargs='?', default=3)
     vigenere_parsers.add_argument('key', type=argparse.FileType('r'))
@@ -49,6 +51,13 @@ def process_request(args: argparse.Namespace) -> None:
             args.key.write(key)
         else:
             args.output.write(encr.decrypt_verman(args.input.read(), args.key.read()))
+    elif args.cipher_name == 'crack':
+        if args.mode == 'decrypt':
+            _cracker = cracker.СaesarСipherСracker(args.language)
+            args.output.write(_cracker.crack_caesar(args.input.read()))
+        else:
+            raise ValueError('for crack you must use mode decrypt, after {}'.format(args.mode))
+
     else:
         raise ValueError('Unknown cipher_name: {}'.format(args.cipher_name))
         
@@ -56,4 +65,3 @@ if __name__ == '__main__':
     parser = create_parser()
     args = parser.parse_args()
     process_request(args)
-    
